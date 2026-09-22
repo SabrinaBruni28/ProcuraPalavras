@@ -1,3 +1,4 @@
+import 'package:procura_palavras/services/controlador_audio.dart';
 import 'package:procura_palavras/widgets/botao_jogo.dart';
 import 'package:procura_palavras/widgets/texto_jogo.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,7 @@ class CaixaDialogo {
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
+                    ControladorAudio.continuarMusica();
                   },
                   texto: 'Menu',
                   size: 20,

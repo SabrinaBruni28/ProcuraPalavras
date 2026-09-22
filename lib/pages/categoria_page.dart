@@ -48,7 +48,7 @@ class _CategoriaPageState extends State<CategoriaPage> {
           ? const Center(child: CircularProgressIndicator())
           : Center(
               child: Container(
-                width: MediaQuery.of(context).size.width - 150,
+                width: 500,
                 height:
                     MediaQuery.of(context).size.height -
                     kToolbarHeight -

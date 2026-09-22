@@ -1,3 +1,4 @@
+import 'package:procura_palavras/services/controlador_audio.dart';
 import 'package:procura_palavras/widgets/palavras_painter.dart';
 import 'package:procura_palavras/widgets/selecao_painter.dart';
 import 'package:procura_palavras/widgets/caixa_dialogo.dart';
@@ -224,7 +225,9 @@ class _TabuleiroState extends State<Tabuleiro> {
       }
     }
 
+    // Não encontrou
     if (palavraEncontrada == null) {
+      ControladorAudio.tocarEfeito('erro.mp3');
       return;
     }
 
@@ -233,9 +236,11 @@ class _TabuleiroState extends State<Tabuleiro> {
       return;
     }
 
+    // Encontrou palavra
     setState(() {
       palavrasEncontradas[palavraEncontrada!] = List.from(selecionadas);
     });
+    ControladorAudio.tocarEfeito('acerto.mp3');
 
     print('Encontrou: $palavraEncontrada');
 
@@ -269,8 +274,9 @@ class _TabuleiroState extends State<Tabuleiro> {
     setState(() {
       jogoFinalizado = true;
     });
-
     CaixaDialogo.mostrar(context);
+    ControladorAudio.pausarMusica();
+    ControladorAudio.tocarEfeito('venceu.mp3');
   }
 
   Offset? obterCelula(Offset posicao) {

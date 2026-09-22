@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:procura_palavras/services/controlador_audio.dart';
 
 class BotaoJogo extends StatelessWidget {
   final String texto;
@@ -16,32 +17,40 @@ class BotaoJogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
+    return MouseRegion(
+      onEnter: (_) {
+        ControladorAudio.tocarEfeito('mouse_houver.mp3');
+      },
+      child: ElevatedButton.icon(
+        onPressed: () {
+          ControladorAudio.tocarEfeito('mouse_click.mp3');
+          onPressed();
+        },
 
-      icon: icone != null ? Icon(icone) : const SizedBox.shrink(),
+        icon: icone != null ? Icon(icone) : const SizedBox.shrink(),
 
-      label: Text(texto, style: const TextStyle(color: Colors.black)),
+        label: Text(texto, style: const TextStyle(color: Colors.black)),
 
-      style: ButtonStyle(
-        textStyle: WidgetStateProperty.all(
-          TextStyle(fontSize: size, fontWeight: FontWeight.bold),
-        ),
+        style: ButtonStyle(
+          textStyle: WidgetStateProperty.all(
+            TextStyle(fontSize: size, fontWeight: FontWeight.bold),
+          ),
 
-        padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-        ),
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+          ),
 
-        backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-          if (states.contains(WidgetState.hovered)) {
-            return Colors.amber.shade400;
-          }
+          backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+            if (states.contains(WidgetState.hovered)) {
+              return Colors.amber.shade400;
+            }
 
-          return Colors.amber.shade300;
-        }),
+            return Colors.amber.shade300;
+          }),
 
-        shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ),
     );
