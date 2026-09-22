@@ -31,7 +31,7 @@ class _TabuleiroState extends State<Tabuleiro> {
   Offset? inicioToque;
   Offset? direcao;
 
-  static const double tamanho = 430;
+  static const double tamanho = 450;
 
   // Cores usadas para as palavras encontradas.
   final List<Color> cores = [
@@ -165,16 +165,22 @@ class _TabuleiroState extends State<Tabuleiro> {
         .join();
   }
 
+  String normalizarPalavra(String palavra) {
+    return palavra.toUpperCase().replaceAll('-', '').replaceAll(' ', '');
+  }
+
   void conferePalavra(String palavra) {
     String? palavraEncontrada;
 
-    if (widget.palavras.contains(palavra)) {
-      palavraEncontrada = palavra;
-    } else {
-      final invertida = palavra.split('').reversed.join();
+    final palavraNormalizada = normalizarPalavra(palavra);
 
-      if (widget.palavras.contains(invertida)) {
-        palavraEncontrada = invertida;
+    for (final palavraLista in widget.palavras) {
+      final palavraListaNormalizada = normalizarPalavra(palavraLista);
+
+      // Verifica na direção normal.
+      if (palavraListaNormalizada == palavraNormalizada) {
+        palavraEncontrada = palavraLista;
+        break;
       }
     }
 
@@ -193,10 +199,8 @@ class _TabuleiroState extends State<Tabuleiro> {
 
     print('Encontrou: $palavraEncontrada');
 
-    // Rola a lista até a palavra encontrada.
     rolarAtePalavra(palavraEncontrada);
 
-    // Verifica se todas as palavras foram encontradas.
     if (palavrasEncontradas.length == widget.palavras.length) {
       finalizarJogo();
     }
@@ -237,8 +241,9 @@ class _TabuleiroState extends State<Tabuleiro> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
-              child: const Text('Continuar'),
+              child: const Text('Menu'),
             ),
           ],
         );

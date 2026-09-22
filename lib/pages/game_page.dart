@@ -12,34 +12,45 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
+  String categoria = "";
   List<String> palavras = [];
   List<List<String>> matriz = [];
 
   bool carregando = true;
+  bool carregamentoIniciado = false;
 
   @override
-  void initState() {
-    super.initState();
-    carregarJogo();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!carregamentoIniciado) {
+      carregamentoIniciado = true;
+      carregarJogo();
+    }
   }
 
   Future<void> carregarJogo() async {
     try {
+      categoria = ModalRoute.of(context)!.settings.arguments as String;
+
+      print('Categoria recebida: $categoria');
+
       final palavrasApi = await ApiService.carregarPalavras(
         'portugues',
-        'frutas',
+        categoria,
       );
 
       final gerador = GeradorTabuleiro(tamanho: 10);
 
       final resultado = gerador.gerar(palavrasApi);
 
+      print('Palavras selecionadas: ${resultado.palavras}');
+
       setState(() {
         palavras = resultado.palavras;
         matriz = resultado.matriz;
         carregando = false;
       });
-      print(resultado.palavras);
     } catch (e) {
       print('ERRO AO CARREGAR JOGO: $e');
 
@@ -52,7 +63,7 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarJogo(titulo: "Categoria"),
+      appBar: AppBarJogo(titulo: categoria.toUpperCase()),
       body: Center(
         child: carregando
             ? const CircularProgressIndicator()

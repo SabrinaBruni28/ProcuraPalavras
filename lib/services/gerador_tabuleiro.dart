@@ -19,11 +19,16 @@ class GeradorTabuleiro {
 
     final palavrasValidas = palavras
         .map(
-          (palavra) =>
-              palavra.toUpperCase().replaceAll('-', '').replaceAll(' ', ''),
+          (palavra) => (
+            original: palavra.toUpperCase().replaceAll('-', ' '),
+            tabuleiro: palavra
+                .toUpperCase()
+                .replaceAll('-', '')
+                .replaceAll(' ', ''),
+          ),
         )
-        .where((palavra) => palavra.length <= tamanho)
-        .where((palavra) => palavra.isNotEmpty)
+        .where((palavra) => palavra.tabuleiro.length <= tamanho)
+        .where((palavra) => palavra.tabuleiro.isNotEmpty)
         .toList();
 
     palavrasValidas.shuffle(random);
@@ -32,10 +37,10 @@ class GeradorTabuleiro {
 
     for (final palavra in palavrasValidas) {
       try {
-        colocarPalavra(matriz, palavra);
-        palavrasSelecionadas.add(palavra);
+        colocarPalavra(matriz, palavra.tabuleiro);
+        palavrasSelecionadas.add(palavra.original);
       } catch (_) {
-        // Se não couber, simplesmente tenta a próxima.
+        // Se não couber, tenta a próxima.
       }
     }
 

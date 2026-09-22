@@ -1,6 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+
+import 'dart:async';
 
 class AppBarJogo extends StatefulWidget implements PreferredSizeWidget {
   final String titulo;

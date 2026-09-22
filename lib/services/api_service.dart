@@ -1,3 +1,4 @@
+import 'package:procura_palavras/models/categoria.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:convert';
@@ -5,7 +6,7 @@ import 'dart:convert';
 class ApiService {
   static const String baseApi = 'https://sabrinabruni28.github.io/forca-api/';
 
-  static Future<List<dynamic>> carregarCategorias(String idioma) async {
+  static Future<List<Categoria>> carregarCategorias(String idioma) async {
     final url = Uri.parse('$baseApi$idioma/index.json');
 
     final response = await http.get(url);
@@ -16,7 +17,9 @@ class ApiService {
 
     final data = jsonDecode(response.body);
 
-    return data['categorias'];
+    return (data['categorias'] as List)
+        .map((categoria) => Categoria.fromJson(categoria))
+        .toList();
   }
 
   static Future<List<String>> carregarPalavras(
