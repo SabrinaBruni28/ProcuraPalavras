@@ -59,9 +59,19 @@ class _AppBarJogoState extends State<AppBarJogo> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(
-        widget.titulo,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+      title: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Text(
+          widget.titulo,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
       ),
       centerTitle: true,
       backgroundColor: corAtual,

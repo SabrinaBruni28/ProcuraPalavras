@@ -1,6 +1,6 @@
 import 'package:procura_palavras/services/gerador_tabuleiro.dart';
-import 'package:procura_palavras/services/api_service.dart';
 import 'package:procura_palavras/widgets/app_bar_jogo.dart';
+import 'package:procura_palavras/services/api_service.dart';
 import 'package:procura_palavras/widgets/tabuleiro.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +67,13 @@ class _GamePageState extends State<GamePage> {
       body: Center(
         child: carregando
             ? const CircularProgressIndicator()
-            : Tabuleiro(matriz: matriz, palavras: palavras),
+            : Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 15,
+                ),
+                child: Tabuleiro(matriz: matriz, palavras: palavras),
+              ),
       ),
     );
   }

@@ -36,11 +36,15 @@ class GeradorTabuleiro {
     final palavrasSelecionadas = <String>[];
 
     for (final palavra in palavrasValidas) {
+      if (palavrasSelecionadas.length >= (2 * tamanho)) {
+        break;
+      }
+
       try {
         colocarPalavra(matriz, palavra.tabuleiro);
         palavrasSelecionadas.add(palavra.original);
       } catch (_) {
-        // Se não couber, tenta a próxima.
+        // Não conseguiu colocar, tenta outra.
       }
     }
 

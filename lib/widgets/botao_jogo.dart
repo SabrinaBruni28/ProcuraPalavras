@@ -4,12 +4,14 @@ class BotaoJogo extends StatelessWidget {
   final String texto;
   final VoidCallback onPressed;
   final IconData? icone;
+  final double size;
 
   const BotaoJogo({
     super.key,
     required this.texto,
     required this.onPressed,
     this.icone,
+    this.size = 25,
   });
 
   @override
@@ -23,7 +25,7 @@ class BotaoJogo extends StatelessWidget {
 
       style: ButtonStyle(
         textStyle: WidgetStateProperty.all(
-          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          TextStyle(fontSize: size, fontWeight: FontWeight.bold),
         ),
 
         padding: WidgetStateProperty.all(

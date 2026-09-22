@@ -48,13 +48,21 @@ class _CategoriaPageState extends State<CategoriaPage> {
           ? const Center(child: CircularProgressIndicator())
           : Center(
               child: Container(
-                height: 800,
-                width: 500,
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                width: MediaQuery.of(context).size.width - 150,
+                height:
+                    MediaQuery.of(context).size.height -
+                    kToolbarHeight -
+                    MediaQuery.of(context).padding.top,
+
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 30,
+                ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  spacing: 20,
                   children: [
                     const TextoJogo(texto: "Escolha uma categoria:"),
-                    const SizedBox(height: 20),
                     Expanded(child: listaCategorias()),
                   ],
                 ),

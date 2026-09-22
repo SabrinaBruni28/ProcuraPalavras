@@ -1,5 +1,6 @@
 import 'package:procura_palavras/widgets/palavras_painter.dart';
 import 'package:procura_palavras/widgets/selecao_painter.dart';
+import 'package:procura_palavras/widgets/caixa_dialogo.dart';
 import 'package:flutter/material.dart';
 
 class Tabuleiro extends StatefulWidget {
@@ -40,11 +41,27 @@ class _TabuleiroState extends State<Tabuleiro> {
     Colors.green,
     Colors.orange,
     Colors.purple,
-    Colors.teal,
     Colors.pink,
+    Colors.teal,
     Colors.brown,
-    Colors.yellowAccent,
     Colors.cyan,
+    Colors.indigo,
+    Colors.lime,
+    Colors.deepOrange,
+    Colors.deepPurple,
+    Colors.blueGrey,
+    Colors.amber,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.redAccent,
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.purpleAccent,
+    Colors.pinkAccent,
+    Colors.cyanAccent,
+    Colors.orangeAccent,
+    Colors.tealAccent,
+    Colors.indigoAccent,
   ];
 
   int get quantidade => widget.matriz.length;
@@ -88,6 +105,13 @@ class _TabuleiroState extends State<Tabuleiro> {
       return;
     }
 
+    // Descobre a célula que está sendo tocada.
+    final celulaAtual = obterCelula(posicao);
+
+    if (celulaAtual == null) {
+      return;
+    }
+
     final movimento = posicao - inicioToque!;
 
     if (movimento.distance < tamanhoCelula * 0.25) {
@@ -112,22 +136,38 @@ class _TabuleiroState extends State<Tabuleiro> {
 
     direcao = novaDirecao;
 
-    final distancia = movimento.distance;
-    final quantidade = (distancia / tamanhoCelula).round();
-
     final inicio = selecionadas.first;
+
+    final linhaInicial = inicio.dx.toInt();
+    final colunaInicial = inicio.dy.toInt();
+
+    final linhaAtual = celulaAtual.dx.toInt();
+    final colunaAtual = celulaAtual.dy.toInt();
+
+    // Verifica quantas células existem entre o início
+    // e a célula atualmente tocada.
+    final diferencaLinha = linhaAtual - linhaInicial;
+    final diferencaColuna = colunaAtual - colunaInicial;
+
+    int quantidade;
+
+    if (novaDirecao.dx != 0) {
+      quantidade = diferencaLinha.abs();
+    } else {
+      quantidade = diferencaColuna.abs();
+    }
 
     final novasSelecionadas = <Offset>[];
 
     for (int i = 0; i <= quantidade; i++) {
-      final linha = inicio.dx + direcao!.dx * i;
-      final coluna = inicio.dy + direcao!.dy * i;
+      final linha = linhaInicial + novaDirecao.dx.toInt() * i;
+      final coluna = colunaInicial + novaDirecao.dy.toInt() * i;
 
       if (linha >= 0 &&
           linha < widget.matriz.length &&
           coluna >= 0 &&
           coluna < widget.matriz[0].length) {
-        novasSelecionadas.add(Offset(linha, coluna));
+        novasSelecionadas.add(Offset(linha.toDouble(), coluna.toDouble()));
       }
     }
 
@@ -230,25 +270,7 @@ class _TabuleiroState extends State<Tabuleiro> {
       jogoFinalizado = true;
     });
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Parabéns! 🎉'),
-          content: const Text('Você encontrou todas as palavras!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Menu'),
-            ),
-          ],
-        );
-      },
-    );
+    CaixaDialogo.mostrar(context);
   }
 
   Offset? obterCelula(Offset posicao) {
@@ -303,8 +325,8 @@ class _TabuleiroState extends State<Tabuleiro> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       spacing: 30,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 500,
@@ -359,11 +381,14 @@ class _TabuleiroState extends State<Tabuleiro> {
                     final coluna = index % quantidade;
 
                     return Center(
-                      child: Text(
-                        widget.matriz[linha][coluna],
-                        style: const TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.matriz[linha][coluna],
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     );
