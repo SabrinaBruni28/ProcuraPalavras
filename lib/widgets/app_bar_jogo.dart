@@ -1,3 +1,4 @@
+import 'package:procura_palavras/services/controlador_audio.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -75,6 +76,36 @@ class _AppBarJogoState extends State<AppBarJogo> {
       ),
       centerTitle: true,
       backgroundColor: corAtual,
+      leading: Navigator.canPop(context)
+          ? MouseRegion(
+              onEnter: (_) {
+                ControladorAudio.tocarEfeito('mouse_houver.mp3');
+              },
+              child: IconButton(
+                onPressed: () {
+                  ControladorAudio.tocarEfeito('mouse_click.mp3');
+                  Navigator.of(context).pop();
+                },
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith<Color>((
+                    states,
+                  ) {
+                    if (states.contains(WidgetState.hovered)) {
+                      return Colors.white.withValues(alpha: 0.35);
+                    }
+
+                    return Colors.transparent;
+                  }),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+              ),
+            )
+          : null,
     );
   }
 }

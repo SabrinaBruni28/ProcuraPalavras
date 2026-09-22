@@ -64,16 +64,18 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarJogo(titulo: categoria.toUpperCase()),
-      body: Center(
-        child: carregando
-            ? const CircularProgressIndicator()
-            : Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 15,
+      body: SingleChildScrollView(
+        child: Center(
+          child: carregando
+              ? const CircularProgressIndicator()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 15,
+                  ),
+                  child: Tabuleiro(matriz: matriz, palavras: palavras),
                 ),
-                child: Tabuleiro(matriz: matriz, palavras: palavras),
-              ),
+        ),
       ),
     );
   }

@@ -1,14 +1,17 @@
-import 'package:procura_palavras/pages/configuracoes_page.dart';
 import 'package:procura_palavras/services/controlador_audio.dart';
+import 'package:procura_palavras/pages/configuracoes_page.dart';
 import 'package:procura_palavras/pages/categoria_page.dart';
 import 'package:procura_palavras/pages/home_page.dart';
 import 'package:procura_palavras/pages/game_page.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Inicia sons
+  await ControladorAudio.carregarVolumes();
   ControladorAudio.tocarMusica('music.mp3');
+
   runApp(
     MaterialApp(
       title: "Procura Palavras",

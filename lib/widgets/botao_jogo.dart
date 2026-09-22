@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:procura_palavras/services/controlador_audio.dart';
+import 'package:flutter/material.dart';
 
 class BotaoJogo extends StatelessWidget {
   final String texto;
