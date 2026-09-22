@@ -1,3 +1,4 @@
+import 'package:procura_palavras/pages/home_page.dart';
 import 'package:procura_palavras/pages/game_page.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +7,9 @@ void main() {
     MaterialApp(
       title: "Procura Palavras",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.indigoAccent)),
-      home: GamePage(),
+      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.purple)),
+      home: HomePage(),
+      routes: {"/game": (context) => GamePage()},
     ),
   );
 }

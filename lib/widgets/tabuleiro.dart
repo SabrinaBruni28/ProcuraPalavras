@@ -36,8 +36,8 @@ class _TabuleiroState extends State<Tabuleiro> {
     Colors.purple,
     Colors.teal,
     Colors.pink,
-    Colors.amber,
-    Colors.red,
+    Colors.brown,
+    Colors.yellowAccent,
     Colors.cyan,
   ];
 

@@ -18,7 +18,10 @@ class GeradorTabuleiro {
     final matriz = List.generate(tamanho, (_) => List.filled(tamanho, ''));
 
     final palavrasValidas = palavras
-        .map((palavra) => palavra.toUpperCase().replaceAll('-', ''))
+        .map(
+          (palavra) =>
+              palavra.toUpperCase().replaceAll('-', '').replaceAll(' ', ''),
+        )
         .where((palavra) => palavra.length <= tamanho)
         .where((palavra) => palavra.isNotEmpty)
         .toList();
