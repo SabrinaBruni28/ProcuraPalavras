@@ -60,7 +60,7 @@ class CaixaDialogo {
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
-                    ControladorAudio.continuarMusica();
+                    ControladorAudio.tocarMusica("music.mp3");
                   },
                   texto: 'Menu',
                   size: 20,

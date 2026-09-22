@@ -17,21 +17,21 @@ class _GamePageState extends State<GamePage> {
   List<List<String>> matriz = [];
 
   bool carregando = true;
-  bool carregamentoIniciado = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
 
-    if (!carregamentoIniciado) {
-      carregamentoIniciado = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       carregarJogo();
-    }
+    });
   }
 
   Future<void> carregarJogo() async {
     try {
-      categoria = ModalRoute.of(context)!.settings.arguments as String;
+      setState(() {
+        categoria = ModalRoute.of(context)!.settings.arguments as String;
+      });
 
       print('Categoria recebida: $categoria');
 
@@ -64,18 +64,25 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarJogo(titulo: categoria.toUpperCase()),
-      body: SingleChildScrollView(
-        child: Center(
-          child: carregando
-              ? const CircularProgressIndicator()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 15,
-                  ),
-                  child: Tabuleiro(matriz: matriz, palavras: palavras),
-                ),
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: carregando
+                  ? const Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 15,
+                      ),
+                      child: Center(
+                        child: Tabuleiro(matriz: matriz, palavras: palavras),
+                      ),
+                    ),
+            ),
+          );
+        },
       ),
     );
   }

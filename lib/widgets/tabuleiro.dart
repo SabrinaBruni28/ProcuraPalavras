@@ -275,8 +275,7 @@ class _TabuleiroState extends State<Tabuleiro> {
       jogoFinalizado = true;
     });
     CaixaDialogo.mostrar(context);
-    ControladorAudio.pausarMusica();
-    ControladorAudio.tocarEfeito('venceu.mp3');
+    ControladorAudio.tocarMusica('venceu.mp3');
   }
 
   Offset? obterCelula(Offset posicao) {
@@ -331,12 +330,12 @@ class _TabuleiroState extends State<Tabuleiro> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 30,
+      spacing: 15,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 500,
-          height: 100,
+          height: 90,
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: listaPalavras(),
         ),

@@ -15,7 +15,6 @@ class ControladorAudio {
     'mouse_hover.mp3': 1.0,
     'acerto.mp3': 1.0,
     'erro.mp3': 0.3,
-    'venceu.mp3': 0.1,
   };
 
   static Future<void> carregarVolumes() async {
