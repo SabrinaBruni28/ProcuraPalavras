@@ -1,5 +1,6 @@
 import 'package:procura_palavras/services/gerador_tabuleiro.dart';
 import 'package:procura_palavras/services/api_service.dart';
+import 'package:procura_palavras/widgets/app_bar_jogo.dart';
 import 'package:procura_palavras/widgets/tabuleiro.dart';
 import 'package:flutter/material.dart';
 
@@ -51,11 +52,7 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Categoria', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.purple,
-        centerTitle: true,
-      ),
+      appBar: AppBarJogo(titulo: "Categoria"),
       body: Center(
         child: carregando
             ? const CircularProgressIndicator()

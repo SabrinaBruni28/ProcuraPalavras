@@ -19,13 +19,19 @@ class _TabuleiroState extends State<Tabuleiro> {
   // Letras selecionadas durante o arrasto atual.
   final List<Offset> selecionadas = [];
 
+  // Controla a rolagem horizontal da lista de palavras.
+  final ScrollController palavrasScrollController = ScrollController();
+
+  // Permite localizar cada palavra dentro da lista.
+  late final List<GlobalKey> palavrasKeys;
+
   bool selecionando = false;
   bool jogoFinalizado = false;
 
   Offset? inicioToque;
   Offset? direcao;
 
-  static const double tamanho = 400;
+  static const double tamanho = 430;
 
   // Cores usadas para as palavras encontradas.
   final List<Color> cores = [
@@ -44,6 +50,20 @@ class _TabuleiroState extends State<Tabuleiro> {
   int get quantidade => widget.matriz.length;
 
   double get tamanhoCelula => tamanho / quantidade;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Cria uma chave para cada palavra.
+    palavrasKeys = List.generate(widget.palavras.length, (_) => GlobalKey());
+  }
+
+  @override
+  void dispose() {
+    palavrasScrollController.dispose();
+    super.dispose();
+  }
 
   void iniciarSelecao(Offset posicao) {
     if (jogoFinalizado) return;
@@ -64,7 +84,9 @@ class _TabuleiroState extends State<Tabuleiro> {
   }
 
   void atualizarSelecao(Offset posicao) {
-    if (!selecionando || inicioToque == null || jogoFinalizado) return;
+    if (!selecionando || inicioToque == null || jogoFinalizado) {
+      return;
+    }
 
     final movimento = posicao - inicioToque!;
 
@@ -171,10 +193,30 @@ class _TabuleiroState extends State<Tabuleiro> {
 
     print('Encontrou: $palavraEncontrada');
 
+    // Rola a lista até a palavra encontrada.
+    rolarAtePalavra(palavraEncontrada);
+
     // Verifica se todas as palavras foram encontradas.
     if (palavrasEncontradas.length == widget.palavras.length) {
       finalizarJogo();
     }
+  }
+
+  void rolarAtePalavra(String palavra) {
+    final indice = widget.palavras.indexOf(palavra);
+
+    if (indice == -1) return;
+
+    final context = palavrasKeys[indice].currentContext;
+
+    if (context == null) return;
+
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      alignment: 0.5,
+    );
   }
 
   void finalizarJogo() {
@@ -219,30 +261,37 @@ class _TabuleiroState extends State<Tabuleiro> {
   }
 
   Widget listaPalavras() {
-    return ListView.builder(
-      itemCount: widget.palavras.length,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        final palavra = widget.palavras[index];
-        final encontrada = palavrasEncontradas.containsKey(palavra);
+    return Scrollbar(
+      controller: palavrasScrollController,
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        controller: palavrasScrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(widget.palavras.length, (index) {
+            final palavra = widget.palavras[index];
+            final encontrada = palavrasEncontradas.containsKey(palavra);
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Center(
-            child: Text(
-              palavra,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                decoration: encontrada
-                    ? TextDecoration.lineThrough
-                    : TextDecoration.none,
-                color: encontrada ? Colors.grey : Colors.black,
+            return Padding(
+              key: palavrasKeys[index],
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Center(
+                child: Text(
+                  palavra,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    decoration: encontrada
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                    color: encontrada ? Colors.grey : Colors.black,
+                  ),
+                ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          }),
+        ),
+      ),
     );
   }
 
@@ -250,28 +299,31 @@ class _TabuleiroState extends State<Tabuleiro> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
+      spacing: 30,
       children: [
-        SizedBox(width: 500, height: 120, child: listaPalavras()),
+        Container(
+          width: 500,
+          height: 100,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: listaPalavras(),
+        ),
+
         GestureDetector(
           onPanStart: (details) {
             iniciarSelecao(details.localPosition);
           },
-
           onPanUpdate: (details) {
             atualizarSelecao(details.localPosition);
           },
-
           onPanEnd: (_) {
             finalizarSelecao();
           },
-
           child: SizedBox(
             width: tamanho,
             height: tamanho,
-
             child: Stack(
               children: [
-                // Palavras que já foram encontradas
+                // Palavras que já foram encontradas.
                 CustomPaint(
                   size: const Size(tamanho, tamanho),
                   painter: PalavrasPainter(
@@ -281,16 +333,16 @@ class _TabuleiroState extends State<Tabuleiro> {
                   ),
                 ),
 
-                // Seleção que está sendo feita neste momento
+                // Seleção que está sendo feita neste momento.
                 CustomPaint(
-                  size: Size(tamanho, tamanho),
+                  size: const Size(tamanho, tamanho),
                   painter: SelecaoPainter(
                     selecionadas: selecionadas,
                     tamanhoCelula: tamanhoCelula,
                   ),
                 ),
 
-                // Letras
+                // Letras.
                 GridView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
