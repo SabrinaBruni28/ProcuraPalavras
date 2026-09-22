@@ -19,7 +19,7 @@ class PalavrasPainter extends CustomPainter {
       if (posicoes.isEmpty) continue;
 
       final paint = Paint()
-        ..color = cores[indice % cores.length]
+        ..color = cores[indice % cores.length].withValues(alpha: 0.7)
         ..strokeWidth = tamanhoCelula * 0.65
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;

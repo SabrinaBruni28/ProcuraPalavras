@@ -3,23 +3,16 @@ import 'package:procura_palavras/widgets/selecao_painter.dart';
 import 'package:flutter/material.dart';
 
 class Tabuleiro extends StatefulWidget {
-  const Tabuleiro({super.key});
+  final List<List<String>> matriz;
+  final List<String> palavras;
+
+  const Tabuleiro({super.key, required this.matriz, required this.palavras});
 
   @override
   State<Tabuleiro> createState() => _TabuleiroState();
 }
 
 class _TabuleiroState extends State<Tabuleiro> {
-  final matriz = [
-    ['C', 'A', 'S', 'A', 'R'],
-    ['T', 'B', 'O', 'L', 'A'],
-    ['P', 'A', 'T', 'O', 'S'],
-    ['M', 'E', 'S', 'A', 'D'],
-    ['R', 'I', 'O', 'F', 'L'],
-  ];
-
-  final palavras = ['CASAR', 'BOLA', 'PATO', 'MESA', 'RIO', 'LOAF'];
-
   // Guarda as posições de cada palavra encontrada.
   final Map<String, List<Offset>> palavrasEncontradas = {};
 
@@ -44,9 +37,11 @@ class _TabuleiroState extends State<Tabuleiro> {
     Colors.teal,
     Colors.pink,
     Colors.amber,
+    Colors.red,
+    Colors.cyan,
   ];
 
-  int get quantidade => matriz.length;
+  int get quantidade => widget.matriz.length;
 
   double get tamanhoCelula => tamanho / quantidade;
 
@@ -107,9 +102,9 @@ class _TabuleiroState extends State<Tabuleiro> {
       final coluna = inicio.dy + direcao!.dy * i;
 
       if (linha >= 0 &&
-          linha < matriz.length &&
+          linha < widget.matriz.length &&
           coluna >= 0 &&
-          coluna < matriz[0].length) {
+          coluna < widget.matriz[0].length) {
         novasSelecionadas.add(Offset(linha, coluna));
       }
     }
@@ -144,19 +139,19 @@ class _TabuleiroState extends State<Tabuleiro> {
     }
 
     return selecionadas
-        .map((posicao) => matriz[posicao.dx.toInt()][posicao.dy.toInt()])
+        .map((posicao) => widget.matriz[posicao.dx.toInt()][posicao.dy.toInt()])
         .join();
   }
 
   void conferePalavra(String palavra) {
     String? palavraEncontrada;
 
-    if (palavras.contains(palavra)) {
+    if (widget.palavras.contains(palavra)) {
       palavraEncontrada = palavra;
     } else {
       final invertida = palavra.split('').reversed.join();
 
-      if (palavras.contains(invertida)) {
+      if (widget.palavras.contains(invertida)) {
         palavraEncontrada = invertida;
       }
     }
@@ -177,7 +172,7 @@ class _TabuleiroState extends State<Tabuleiro> {
     print('Encontrou: $palavraEncontrada');
 
     // Verifica se todas as palavras foram encontradas.
-    if (palavrasEncontradas.length == palavras.length) {
+    if (palavrasEncontradas.length == widget.palavras.length) {
       finalizarJogo();
     }
   }
@@ -223,76 +218,105 @@ class _TabuleiroState extends State<Tabuleiro> {
     return Offset(linha.toDouble(), coluna.toDouble());
   }
 
-  // Retorna a cor da palavra encontrada.
-  Color corDaPalavra(int indice) {
-    return cores[indice % cores.length];
+  Widget listaPalavras() {
+    return ListView.builder(
+      itemCount: widget.palavras.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        final palavra = widget.palavras[index];
+        final encontrada = palavrasEncontradas.containsKey(palavra);
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Center(
+            child: Text(
+              palavra,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                decoration: encontrada
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                color: encontrada ? Colors.grey : Colors.black,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: (details) {
-        iniciarSelecao(details.localPosition);
-      },
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SizedBox(width: 500, height: 120, child: listaPalavras()),
+        GestureDetector(
+          onPanStart: (details) {
+            iniciarSelecao(details.localPosition);
+          },
 
-      onPanUpdate: (details) {
-        atualizarSelecao(details.localPosition);
-      },
+          onPanUpdate: (details) {
+            atualizarSelecao(details.localPosition);
+          },
 
-      onPanEnd: (_) {
-        finalizarSelecao();
-      },
+          onPanEnd: (_) {
+            finalizarSelecao();
+          },
 
-      child: SizedBox(
-        width: tamanho,
-        height: tamanho,
+          child: SizedBox(
+            width: tamanho,
+            height: tamanho,
 
-        child: Stack(
-          children: [
-            // Palavras que já foram encontradas
-            CustomPaint(
-              size: const Size(tamanho, tamanho),
-              painter: PalavrasPainter(
-                palavrasEncontradas: palavrasEncontradas,
-                tamanhoCelula: tamanhoCelula,
-                cores: cores,
-              ),
-            ),
-
-            // Seleção que está sendo feita neste momento
-            CustomPaint(
-              size: const Size(tamanho, tamanho),
-              painter: SelecaoPainter(
-                selecionadas: selecionadas,
-                tamanhoCelula: tamanhoCelula,
-              ),
-            ),
-
-            // Letras
-            GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-              ),
-              itemCount: 25,
-              itemBuilder: (context, index) {
-                final linha = index ~/ 5;
-                final coluna = index % 5;
-
-                return Center(
-                  child: Text(
-                    matriz[linha][coluna],
-                    style: const TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+            child: Stack(
+              children: [
+                // Palavras que já foram encontradas
+                CustomPaint(
+                  size: const Size(tamanho, tamanho),
+                  painter: PalavrasPainter(
+                    palavrasEncontradas: palavrasEncontradas,
+                    tamanhoCelula: tamanhoCelula,
+                    cores: cores,
                   ),
-                );
-              },
+                ),
+
+                // Seleção que está sendo feita neste momento
+                CustomPaint(
+                  size: Size(tamanho, tamanho),
+                  painter: SelecaoPainter(
+                    selecionadas: selecionadas,
+                    tamanhoCelula: tamanhoCelula,
+                  ),
+                ),
+
+                // Letras
+                GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: quantidade,
+                  ),
+                  itemCount: quantidade * quantidade,
+                  itemBuilder: (context, index) {
+                    final linha = index ~/ quantidade;
+                    final coluna = index % quantidade;
+
+                    return Center(
+                      child: Text(
+                        widget.matriz[linha][coluna],
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
