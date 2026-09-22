@@ -66,6 +66,7 @@ class _GamePageState extends State<GamePage> {
       appBar: AppBarJogo(titulo: categoria.toUpperCase()),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final tamanho = constraints.maxWidth.clamp(300.0, 450.0);
           return SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
@@ -77,7 +78,11 @@ class _GamePageState extends State<GamePage> {
                         horizontal: 15,
                       ),
                       child: Center(
-                        child: Tabuleiro(matriz: matriz, palavras: palavras),
+                        child: Tabuleiro(
+                          matriz: matriz,
+                          palavras: palavras,
+                          tamanho: tamanho,
+                        ),
                       ),
                     ),
             ),

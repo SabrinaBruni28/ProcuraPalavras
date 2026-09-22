@@ -7,8 +7,14 @@ import 'package:flutter/material.dart';
 class Tabuleiro extends StatefulWidget {
   final List<List<String>> matriz;
   final List<String> palavras;
+  final double tamanho;
 
-  const Tabuleiro({super.key, required this.matriz, required this.palavras});
+  const Tabuleiro({
+    super.key,
+    required this.matriz,
+    required this.palavras,
+    required this.tamanho,
+  });
 
   @override
   State<Tabuleiro> createState() => _TabuleiroState();
@@ -32,8 +38,6 @@ class _TabuleiroState extends State<Tabuleiro> {
 
   Offset? inicioToque;
   Offset? direcao;
-
-  static const double tamanho = 450;
 
   // Cores usadas para as palavras encontradas.
   final List<Color> cores = [
@@ -67,7 +71,7 @@ class _TabuleiroState extends State<Tabuleiro> {
 
   int get quantidade => widget.matriz.length;
 
-  double get tamanhoCelula => tamanho / quantidade;
+  double get tamanhoCelula => widget.tamanho / quantidade;
 
   @override
   void initState() {
@@ -281,8 +285,8 @@ class _TabuleiroState extends State<Tabuleiro> {
   Offset? obterCelula(Offset posicao) {
     if (posicao.dx < 0 ||
         posicao.dy < 0 ||
-        posicao.dx >= tamanho ||
-        posicao.dy >= tamanho) {
+        posicao.dx >= widget.tamanho ||
+        posicao.dy >= widget.tamanho) {
       return null;
     }
 
@@ -351,13 +355,13 @@ class _TabuleiroState extends State<Tabuleiro> {
             finalizarSelecao();
           },
           child: SizedBox(
-            width: tamanho,
-            height: tamanho,
+            width: widget.tamanho,
+            height: widget.tamanho,
             child: Stack(
               children: [
                 // Palavras que já foram encontradas.
                 CustomPaint(
-                  size: const Size(tamanho, tamanho),
+                  size: Size(widget.tamanho, widget.tamanho),
                   painter: PalavrasPainter(
                     palavrasEncontradas: palavrasEncontradas,
                     tamanhoCelula: tamanhoCelula,
@@ -367,7 +371,7 @@ class _TabuleiroState extends State<Tabuleiro> {
 
                 // Seleção que está sendo feita neste momento.
                 CustomPaint(
-                  size: const Size(tamanho, tamanho),
+                  size: Size(widget.tamanho, widget.tamanho),
                   painter: SelecaoPainter(
                     selecionadas: selecionadas,
                     tamanhoCelula: tamanhoCelula,
