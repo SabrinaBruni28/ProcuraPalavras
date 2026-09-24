@@ -17,8 +17,8 @@ class ControladorCicloVida with WidgetsBindingObserver {
         ControladorAudio.continuarMusica();
         break;
 
-      case AppLifecycleState.paused:
       case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
         ControladorAudio.pausarMusica();
         break;

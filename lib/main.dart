@@ -10,11 +10,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await ControladorAudio.carregarVolumes();
+  await ControladorAudio.configurar();
 
   final cicloVida = ControladorCicloVida();
   cicloVida.iniciar();
 
-  ControladorAudio.tocarMusica('music.mp3');
+  await ControladorAudio.tocarMusica('music.mp3');
 
   runApp(
     MaterialApp(

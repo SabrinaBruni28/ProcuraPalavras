@@ -69,20 +69,21 @@ class _GamePageState extends State<GamePage> {
           final tamanho = constraints.maxWidth.clamp(300.0, 450.0);
           return SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+                minWidth: constraints.maxWidth,
+              ),
               child: carregando
                   ? const Center(child: CircularProgressIndicator())
                   : Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 15,
+                        vertical: 20,
+                        horizontal: 20,
                       ),
-                      child: Center(
-                        child: Tabuleiro(
-                          matriz: matriz,
-                          palavras: palavras,
-                          tamanho: tamanho,
-                        ),
+                      child: Tabuleiro(
+                        matriz: matriz,
+                        palavras: palavras,
+                        tamanho: tamanho,
                       ),
                     ),
             ),

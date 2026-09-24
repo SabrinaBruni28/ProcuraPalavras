@@ -14,8 +14,20 @@ class ControladorAudio {
     'mouse_clique.mp3': 1.0,
     'mouse_hover.mp3': 1.0,
     'acerto.mp3': 1.0,
-    'erro.mp3': 0.3,
+    'erro.mp3': 0.4,
   };
+
+  static Future<void> configurar() async {
+    await _musica.setAudioContext(
+      AudioContext(
+        android: AudioContextAndroid(
+          audioFocus: AndroidAudioFocus.none,
+          usageType: AndroidUsageType.game,
+          contentType: AndroidContentType.music,
+        ),
+      ),
+    );
+  }
 
   static Future<void> carregarVolumes() async {
     final preferencias = await SharedPreferences.getInstance();

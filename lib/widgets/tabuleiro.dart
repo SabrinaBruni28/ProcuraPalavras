@@ -73,6 +73,8 @@ class _TabuleiroState extends State<Tabuleiro> {
 
   double get tamanhoCelula => widget.tamanho / quantidade;
 
+  double get tamanhoFonte => (tamanhoCelula * 0.55).clamp(10.0, 25.0);
+
   @override
   void initState() {
     super.initState();
@@ -304,18 +306,19 @@ class _TabuleiroState extends State<Tabuleiro> {
         controller: palavrasScrollController,
         scrollDirection: Axis.horizontal,
         child: Row(
+          spacing: 15,
           children: List.generate(widget.palavras.length, (index) {
             final palavra = widget.palavras[index];
             final encontrada = palavrasEncontradas.containsKey(palavra);
 
             return Padding(
               key: palavrasKeys[index],
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Center(
                 child: Text(
                   palavra,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     decoration: encontrada
                         ? TextDecoration.lineThrough
@@ -334,15 +337,16 @@ class _TabuleiroState extends State<Tabuleiro> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 15,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 500,
-          height: 90,
+          height: 100,
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: listaPalavras(),
         ),
+
+        SizedBox(height: 50),
 
         GestureDetector(
           onPanStart: (details) {
@@ -391,11 +395,11 @@ class _TabuleiroState extends State<Tabuleiro> {
 
                     return Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(tamanhoCelula * 0.10),
                         child: Text(
                           widget.matriz[linha][coluna],
-                          style: const TextStyle(
-                            fontSize: 25,
+                          style: TextStyle(
+                            fontSize: tamanhoFonte,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
