@@ -1,7 +1,7 @@
 import 'package:procura_palavras/services/gerador_tabuleiro.dart';
-import 'package:procura_palavras/widgets/app_bar_jogo.dart';
+import 'package:procura_palavras/components/app_bar_jogo.dart';
 import 'package:procura_palavras/services/api_service.dart';
-import 'package:procura_palavras/widgets/tabuleiro.dart';
+import 'package:procura_palavras/components/tabuleiro.dart';
 import 'package:flutter/material.dart';
 
 class GamePage extends StatefulWidget {
@@ -64,15 +64,18 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarJogo(titulo: categoria.toUpperCase()),
+
       body: LayoutBuilder(
         builder: (context, constraints) {
-          final tamanho = constraints.maxWidth.clamp(300.0, 450.0);
+          final tamanho = (constraints.maxWidth - 40).clamp(0.0, 500.0);
+
           return SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: constraints.maxHeight,
                 minWidth: constraints.maxWidth,
               ),
+
               child: carregando
                   ? const Center(child: CircularProgressIndicator())
                   : Padding(

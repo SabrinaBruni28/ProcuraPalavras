@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+
+// Cores usadas para as palavras encontradas.
+final List<Color> cores = [
+  Colors.red,
+  Colors.blue,
+  Colors.green,
+  Colors.orange,
+  Colors.purple,
+  Colors.pink,
+  Colors.teal,
+  Colors.brown,
+  Colors.cyan,
+  Colors.indigo,
+  Colors.lime,
+  Colors.deepOrange,
+  Colors.deepPurple,
+  Colors.blueGrey,
+  Colors.amber,
+  Colors.lightBlue,
+  Colors.lightGreen,
+  Colors.redAccent,
+  Colors.blueAccent,
+  Colors.greenAccent,
+  Colors.purpleAccent,
+  Colors.pinkAccent,
+  Colors.cyanAccent,
+  Colors.orangeAccent,
+  Colors.tealAccent,
+  Colors.indigoAccent,
+];

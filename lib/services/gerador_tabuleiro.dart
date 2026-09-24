@@ -1,11 +1,6 @@
+import 'package:procura_palavras/models/resultado.dart';
+
 import 'dart:math';
-
-class ResultadoTabuleiro {
-  final List<List<String>> matriz;
-  final List<String> palavras;
-
-  ResultadoTabuleiro({required this.matriz, required this.palavras});
-}
 
 class GeradorTabuleiro {
   final int tamanho;

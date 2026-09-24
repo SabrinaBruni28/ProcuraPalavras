@@ -1,22 +1,13 @@
 import 'package:procura_palavras/services/controlador_audio.dart';
 import 'package:flutter/material.dart';
 
-class BotaoJogo extends StatelessWidget {
-  final String texto;
-  final VoidCallback onPressed;
-  final IconData? icone;
-  final double size;
-
-  const BotaoJogo({
-    super.key,
-    required this.texto,
-    required this.onPressed,
-    this.icone,
-    this.size = 25,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+Widget botaoJogo({
+  required String texto,
+  required VoidCallback onPressed,
+  IconData? icone,
+  double size = 25,
+}) {
+  {
     return MouseRegion(
       onEnter: (_) {
         ControladorAudio.tocarEfeito('mouse_houver.mp3');

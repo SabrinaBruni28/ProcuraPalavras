@@ -1,7 +1,11 @@
+import 'package:procura_palavras/components/palavras_painter.dart';
+import 'package:procura_palavras/components/selecao_painter.dart';
 import 'package:procura_palavras/services/controlador_audio.dart';
-import 'package:procura_palavras/widgets/palavras_painter.dart';
-import 'package:procura_palavras/widgets/selecao_painter.dart';
-import 'package:procura_palavras/widgets/caixa_dialogo.dart';
+import 'package:procura_palavras/components/lista_palavras.dart';
+import 'package:procura_palavras/utils/tabuleiro_utils.dart';
+import 'package:procura_palavras/services/jogo_service.dart';
+import 'package:procura_palavras/utils/formatacao.dart';
+import 'package:procura_palavras/utils/cores.dart';
 import 'package:flutter/material.dart';
 
 class Tabuleiro extends StatefulWidget {
@@ -27,72 +31,21 @@ class _TabuleiroState extends State<Tabuleiro> {
   // Letras selecionadas durante o arrasto atual.
   final List<Offset> selecionadas = [];
 
-  // Controla a rolagem horizontal da lista de palavras.
-  final ScrollController palavrasScrollController = ScrollController();
+  // Key para a lista de palavras
+  final listaPalavrasKey = GlobalKey<ListaPalavrasState>();
 
-  // Permite localizar cada palavra dentro da lista.
-  late final List<GlobalKey> palavrasKeys;
-
-  bool selecionando = false;
-  bool jogoFinalizado = false;
-
-  Offset? inicioToque;
+  // Variáveis de funcionamento do jogo
   Offset? direcao;
+  Offset? inicioToque;
+  bool selecionando = false;
 
-  // Cores usadas para as palavras encontradas.
-  final List<Color> cores = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.orange,
-    Colors.purple,
-    Colors.pink,
-    Colors.teal,
-    Colors.brown,
-    Colors.cyan,
-    Colors.indigo,
-    Colors.lime,
-    Colors.deepOrange,
-    Colors.deepPurple,
-    Colors.blueGrey,
-    Colors.amber,
-    Colors.lightBlue,
-    Colors.lightGreen,
-    Colors.redAccent,
-    Colors.blueAccent,
-    Colors.greenAccent,
-    Colors.purpleAccent,
-    Colors.pinkAccent,
-    Colors.cyanAccent,
-    Colors.orangeAccent,
-    Colors.tealAccent,
-    Colors.indigoAccent,
-  ];
-
+  // Variáveis para layout do jogo
   int get quantidade => widget.matriz.length;
-
   double get tamanhoCelula => widget.tamanho / quantidade;
-
   double get tamanhoFonte => (tamanhoCelula * 0.55).clamp(10.0, 25.0);
 
-  @override
-  void initState() {
-    super.initState();
-
-    // Cria uma chave para cada palavra.
-    palavrasKeys = List.generate(widget.palavras.length, (_) => GlobalKey());
-  }
-
-  @override
-  void dispose() {
-    palavrasScrollController.dispose();
-    super.dispose();
-  }
-
   void iniciarSelecao(Offset posicao) {
-    if (jogoFinalizado) return;
-
-    final celula = obterCelula(posicao);
+    final celula = obterCelula(posicao, widget.tamanho, tamanhoCelula);
 
     if (celula == null) return;
 
@@ -108,12 +61,12 @@ class _TabuleiroState extends State<Tabuleiro> {
   }
 
   void atualizarSelecao(Offset posicao) {
-    if (!selecionando || inicioToque == null || jogoFinalizado) {
+    if (!selecionando || inicioToque == null) {
       return;
     }
 
     // Descobre a célula que está sendo tocada.
-    final celulaAtual = obterCelula(posicao);
+    final celulaAtual = obterCelula(posicao, widget.tamanho, tamanhoCelula);
 
     if (celulaAtual == null) {
       return;
@@ -188,7 +141,7 @@ class _TabuleiroState extends State<Tabuleiro> {
   void finalizarSelecao() {
     if (!selecionando) return;
 
-    final palavra = obterPalavraSelecionada();
+    final palavra = obterPalavraSelecionada(selecionadas, widget.matriz);
 
     if (palavra != null) {
       conferePalavra(palavra);
@@ -200,20 +153,6 @@ class _TabuleiroState extends State<Tabuleiro> {
       inicioToque = null;
       direcao = null;
     });
-  }
-
-  String? obterPalavraSelecionada() {
-    if (selecionadas.isEmpty) {
-      return null;
-    }
-
-    return selecionadas
-        .map((posicao) => widget.matriz[posicao.dx.toInt()][posicao.dy.toInt()])
-        .join();
-  }
-
-  String normalizarPalavra(String palavra) {
-    return palavra.toUpperCase().replaceAll('-', '').replaceAll(' ', '');
   }
 
   void conferePalavra(String palavra) {
@@ -243,6 +182,7 @@ class _TabuleiroState extends State<Tabuleiro> {
     }
 
     // Encontrou palavra
+    listaPalavrasKey.currentState?.rolarAtePalavra(palavraEncontrada);
     setState(() {
       palavrasEncontradas[palavraEncontrada!] = List.from(selecionadas);
     });
@@ -250,88 +190,10 @@ class _TabuleiroState extends State<Tabuleiro> {
 
     print('Encontrou: $palavraEncontrada');
 
-    rolarAtePalavra(palavraEncontrada);
-
+    // Encontrou todas as palavras
     if (palavrasEncontradas.length == widget.palavras.length) {
-      finalizarJogo();
+      finalizarJogo(context);
     }
-  }
-
-  void rolarAtePalavra(String palavra) {
-    final indice = widget.palavras.indexOf(palavra);
-
-    if (indice == -1) return;
-
-    final context = palavrasKeys[indice].currentContext;
-
-    if (context == null) return;
-
-    Scrollable.ensureVisible(
-      context,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      alignment: 0.5,
-    );
-  }
-
-  void finalizarJogo() {
-    if (jogoFinalizado) return;
-
-    setState(() {
-      jogoFinalizado = true;
-    });
-    CaixaDialogo.mostrar(context);
-    ControladorAudio.tocarMusica('venceu.mp3');
-  }
-
-  Offset? obterCelula(Offset posicao) {
-    if (posicao.dx < 0 ||
-        posicao.dy < 0 ||
-        posicao.dx >= widget.tamanho ||
-        posicao.dy >= widget.tamanho) {
-      return null;
-    }
-
-    final coluna = (posicao.dx / tamanhoCelula).floor();
-    final linha = (posicao.dy / tamanhoCelula).floor();
-
-    return Offset(linha.toDouble(), coluna.toDouble());
-  }
-
-  Widget listaPalavras() {
-    return Scrollbar(
-      controller: palavrasScrollController,
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        controller: palavrasScrollController,
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          spacing: 15,
-          children: List.generate(widget.palavras.length, (index) {
-            final palavra = widget.palavras[index];
-            final encontrada = palavrasEncontradas.containsKey(palavra);
-
-            return Padding(
-              key: palavrasKeys[index],
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-              child: Center(
-                child: Text(
-                  palavra,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    decoration: encontrada
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    color: encontrada ? Colors.grey : Colors.black,
-                  ),
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
   }
 
   @override
@@ -343,10 +205,15 @@ class _TabuleiroState extends State<Tabuleiro> {
           width: 500,
           height: 100,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          child: listaPalavras(),
+          child: ListaPalavras(
+            key: listaPalavrasKey,
+            tamanhoFonte: tamanhoFonte,
+            palavras: widget.palavras,
+            palavrasEncontradas: palavrasEncontradas,
+          ),
         ),
 
-        SizedBox(height: 50),
+        SizedBox(height: 30),
 
         GestureDetector(
           onPanStart: (details) {
@@ -358,12 +225,13 @@ class _TabuleiroState extends State<Tabuleiro> {
           onPanEnd: (_) {
             finalizarSelecao();
           },
+
           child: SizedBox(
             width: widget.tamanho,
             height: widget.tamanho,
             child: Stack(
               children: [
-                // Palavras que já foram encontradas.
+                // Palavras encontradas
                 CustomPaint(
                   size: Size(widget.tamanho, widget.tamanho),
                   painter: PalavrasPainter(
@@ -373,7 +241,7 @@ class _TabuleiroState extends State<Tabuleiro> {
                   ),
                 ),
 
-                // Seleção que está sendo feita neste momento.
+                // Seleção atual
                 CustomPaint(
                   size: Size(widget.tamanho, widget.tamanho),
                   painter: SelecaoPainter(
@@ -382,30 +250,27 @@ class _TabuleiroState extends State<Tabuleiro> {
                   ),
                 ),
 
-                // Letras.
-                GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: quantidade,
-                  ),
-                  itemCount: quantidade * quantidade,
-                  itemBuilder: (context, index) {
-                    final linha = index ~/ quantidade;
-                    final coluna = index % quantidade;
-
-                    return Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(tamanhoCelula * 0.10),
-                        child: Text(
-                          widget.matriz[linha][coluna],
-                          style: TextStyle(
-                            fontSize: tamanhoFonte,
-                            fontWeight: FontWeight.bold,
+                // Letras
+                Column(
+                  children: List.generate(quantidade, (linha) {
+                    return Row(
+                      children: List.generate(quantidade, (coluna) {
+                        return SizedBox(
+                          width: tamanhoCelula,
+                          height: tamanhoCelula,
+                          child: Center(
+                            child: Text(
+                              widget.matriz[linha][coluna],
+                              style: TextStyle(
+                                fontSize: tamanhoFonte,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     );
-                  },
+                  }),
                 ),
               ],
             ),

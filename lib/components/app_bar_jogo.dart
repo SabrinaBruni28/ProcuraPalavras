@@ -60,6 +60,9 @@ class _AppBarJogoState extends State<AppBarJogo> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
+      backgroundColor: corAtual,
+
       title: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
         decoration: BoxDecoration(
@@ -74,8 +77,7 @@ class _AppBarJogoState extends State<AppBarJogo> {
           ),
         ),
       ),
-      centerTitle: true,
-      backgroundColor: corAtual,
+
       leading: Navigator.canPop(context)
           ? MouseRegion(
               onEnter: (_) {

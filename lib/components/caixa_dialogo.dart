@@ -46,17 +46,17 @@ class CaixaDialogo {
                 const SizedBox(height: 20),
 
                 // Título
-                TextoJogo(texto: 'Parabéns!'),
+                textoJogo(texto: 'Parabéns!'),
 
                 const SizedBox(height: 12),
 
                 // Mensagem
-                TextoJogo(texto: 'Você encontrou todas as palavras!', size: 18),
+                textoJogo(texto: 'Você encontrou todas as palavras!', size: 18),
 
                 const SizedBox(height: 25),
 
                 // Botão
-                BotaoJogo(
+                botaoJogo(
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();

@@ -1,6 +1,6 @@
+import 'package:procura_palavras/widgets/lista_categoria.dart';
+import 'package:procura_palavras/components/app_bar_jogo.dart';
 import 'package:procura_palavras/services/api_service.dart';
-import 'package:procura_palavras/widgets/app_bar_jogo.dart';
-import 'package:procura_palavras/widgets/botao_jogo.dart';
 import 'package:procura_palavras/widgets/texto_jogo.dart';
 import 'package:procura_palavras/models/categoria.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +44,7 @@ class _CategoriaPageState extends State<CategoriaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarJogo(titulo: 'Categoria'),
+      
       body: carregando
           ? const Center(child: CircularProgressIndicator())
           : Center(
@@ -62,32 +63,12 @@ class _CategoriaPageState extends State<CategoriaPage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   spacing: 20,
                   children: [
-                    const TextoJogo(texto: "Escolha uma categoria:"),
-                    Expanded(child: listaCategorias()),
+                    textoJogo(texto: "Escolha uma categoria:"),
+                    Expanded(child: listaCategorias(categorias: categorias)),
                   ],
                 ),
               ),
             ),
-    );
-  }
-
-  Widget listaCategorias() {
-    return ListView.builder(
-      itemCount: categorias.length,
-      itemBuilder: (context, index) {
-        final categoria = categorias[index];
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: BotaoJogo(
-            texto: categoria.name,
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed("/game", arguments: categoria.key);
-            },
-          ),
-        );
-      },
     );
   }
 }

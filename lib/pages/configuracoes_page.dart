@@ -1,5 +1,6 @@
 import 'package:procura_palavras/services/controlador_audio.dart';
-import 'package:procura_palavras/widgets/app_bar_jogo.dart';
+import 'package:procura_palavras/components/app_bar_jogo.dart';
+import 'package:procura_palavras/widgets/slider_volume.dart';
 import 'package:procura_palavras/widgets/texto_jogo.dart';
 import 'package:flutter/material.dart';
 
@@ -21,109 +22,50 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
       body: SingleChildScrollView(
         child: Center(
-          child: SizedBox(
-            width: 800,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
+
                 children: [
-                  TextoJogo(texto: "Volume", size: 40),
-            
+                  textoJogo(texto: "Volume", size: 40),
+
                   const SizedBox(height: 40),
-            
+
                   // Música
-                  Row(
-                    children: [
-                      const Icon(Icons.music_note, size: 30),
-            
-                      const SizedBox(width: 15),
-            
-                      const SizedBox(
-                        width: 80,
-                        child: Text(
-                          'Música',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-            
-                      Expanded(
-                        child: Slider(
-                          value: volumeMusica,
-                          min: 0,
-                          max: 1,
-                          divisions: 20,
-                          label: '${(volumeMusica * 100).round()}%',
-                          onChanged: (valor) {
-                            setState(() {
-                              volumeMusica = valor;
-                            });
-            
-                            ControladorAudio.alterarVolumeMusica(valor);
-                          },
-                        ),
-                      ),
-            
-                      SizedBox(
-                        width: 50,
-                        child: Text(
-                          '${(volumeMusica * 100).round()}%',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ],
+                  sliderVolume(
+                    icone: Icons.music_note,
+                    titulo: 'Música',
+                    volume: volumeMusica,
+                    onChanged: (valor) {
+                      setState(() {
+                        volumeMusica = valor;
+                      });
+
+                      ControladorAudio.alterarVolumeMusica(valor);
+                    },
                   ),
-            
+
                   const SizedBox(height: 25),
-            
+
                   // Efeitos
-                  Row(
-                    children: [
-                      const Icon(Icons.volume_up, size: 30),
-            
-                      const SizedBox(width: 15),
-            
-                      const SizedBox(
-                        width: 80,
-                        child: Text(
-                          'Efeitos',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-            
-                      Expanded(
-                        child: Slider(
-                          value: volumeEfeitos,
-                          min: 0,
-                          max: 1,
-                          divisions: 20,
-                          label: '${(volumeEfeitos * 100).round()}%',
-                          onChanged: (valor) {
-                            setState(() {
-                              volumeEfeitos = valor;
-                            });
-            
-                            ControladorAudio.alterarVolumeEfeitos(valor);
-                          },
-                        ),
-                      ),
-            
-                      SizedBox(
-                        width: 50,
-                        child: Text(
-                          '${(volumeEfeitos * 100).round()}%',
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ],
+                  sliderVolume(
+                    icone: Icons.volume_up,
+                    titulo: 'Efeitos',
+                    volume: volumeEfeitos,
+                    onChanged: (valor) {
+                      setState(() {
+                        volumeEfeitos = valor;
+                      });
+
+                      ControladorAudio.alterarVolumeEfeitos(valor);
+                    },
                   ),
                 ],
               ),
