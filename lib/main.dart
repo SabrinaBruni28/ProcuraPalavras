@@ -15,7 +15,7 @@ void main() async {
   final cicloVida = ControladorCicloVida();
   cicloVida.iniciar();
 
-  await ControladorAudio.tocarMusica('music.mp3');
+  ControladorAudio.tocarMusica('music.mp3');
 
   runApp(
     MaterialApp(
